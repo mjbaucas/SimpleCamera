@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SimpleCamera</string>
+    <string name="take_photo">Take a Photo</string>
+    <string name="browse_photos">Browse Photos</string>
 </resources>
