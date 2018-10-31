@@ -38,6 +38,9 @@ public class CameraActivity extends AppCompatActivity implements SensorEventList
         sensorManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+
+
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {

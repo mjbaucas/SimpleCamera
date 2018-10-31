@@ -1,6 +1,7 @@
 package com.mjbaucas.simplecamera;
 
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.view.SurfaceHolder;
@@ -56,9 +57,16 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         try {
+            if (camObj != null) {
+                camObj.release();
+                camObj = null;
+            }
             camObj = Camera.open();
             camObj.setDisplayOrientation(90);
             camObj.setPreviewDisplay(holder);
+            Camera.Parameters params = camObj.getParameters();
+            params.setPictureSize(640, 480);
+            camObj.setParameters(params);
         } catch (IOException e) {
             Toast.makeText(getContext(), "Cannot set preview", Toast.LENGTH_LONG).show();
             e.printStackTrace();
@@ -75,6 +83,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         camObj.stopPreview();
+        camObj.release();
         camObj = null;
     }
 }
