@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.LinearLayout;
@@ -50,9 +51,14 @@ public class CameraActivity extends AppCompatActivity implements SensorEventList
             currAccelVal = (float) Math.sqrt(x*x + y*y + z*z);
             accelVal = accelVal * 0.9f + (currAccelVal - lastAccelVal);
 
-            if(accelVal > 8){
-                Log.d("ACCEL", "Value: " + accelVal);
-                Toast.makeText(this, "Shake Detected", Toast.LENGTH_LONG).show();
+            if(accelVal > 12){
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        camPrev.takeImage(); 
+                    }
+                }, 1000);
             }
         }
     }
