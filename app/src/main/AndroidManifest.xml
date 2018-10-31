@@ -16,6 +16,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".CameraActivity"
+            android:label="@string/camera_tab"
+            android:parentActivityName=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mjbaucas.simplecamera.MainActivity" />
+        </activity>
     </application>
-
+    <uses-permission android:name="android.permission.CAMERA" />
 </manifest>
