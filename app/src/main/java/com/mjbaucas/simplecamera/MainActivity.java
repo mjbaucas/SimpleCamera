@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
         browseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent broInt = new Intent(MainActivity.this , BrowseActivity.class);
+                startActivity(broInt);
             }
         });
     }
