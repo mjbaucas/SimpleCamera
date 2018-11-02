@@ -1,14 +1,11 @@
 package com.mjbaucas.simplecamera;
 
 import android.content.Context;
-import android.graphics.PixelFormat;
 import android.hardware.Camera;
-import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,8 +14,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     SurfaceHolder surfaceHolder;
     Camera camObj;
     Camera.PictureCallback pictureCallback;
+    private boolean safeToTakePhoto = false;
+    int cameraDirection = 0;
 
-    public CameraPreview(Context context) {
+    public CameraPreview(final Context context) {
         super(context);
 
         surfaceHolder = getHolder();
@@ -26,7 +25,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         pictureCallback = new Camera.PictureCallback() {
             @Override
-            public void onPictureTaken(byte[] data, Camera camera) {
+            public void onPictureTaken(byte[] data, final Camera camera) {
                 FileOutputStream outputStream;
                 try {
                     outputStream = getContext().openFileOutput(String.format("%d.jpg", System.currentTimeMillis()), Context.MODE_PRIVATE);
@@ -37,40 +36,57 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            camObj.startPreview();
-                        }
-                    }, 2000);
-
+                    if (camera != null) {
+                        camera.startPreview();
+                        Toast.makeText(getContext(), "Photo Taken", Toast.LENGTH_SHORT).show();
+                    }
                 }
+                safeToTakePhoto = true;
             }
         };
     }
 
-    public void takeImage() {
-        camObj.takePicture(null, null, pictureCallback);
+    public void switchCamera(){
+        cameraDirection = (cameraDirection + 1) % 2;
+        startCamera(surfaceHolder);
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
+    private void startCamera(SurfaceHolder holder){
         try {
             if (camObj != null) {
+                camObj.stopPreview();
                 camObj.release();
                 camObj = null;
             }
-            camObj = Camera.open();
+
+            if (cameraDirection == 0) {
+                camObj = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+            } else {
+                camObj = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+            }
+
             camObj.setDisplayOrientation(90);
             camObj.setPreviewDisplay(holder);
             Camera.Parameters params = camObj.getParameters();
             params.setPictureSize(640, 480);
             camObj.setParameters(params);
+            camObj.startPreview();
         } catch (IOException e) {
             Toast.makeText(getContext(), "Cannot set preview", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+    }
+
+    public void takeImage() {
+        if (camObj != null && safeToTakePhoto) {
+            camObj.takePicture(null, null, pictureCallback);
+            safeToTakePhoto = false;
+        }
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        this.startCamera(holder);
     }
 
     @Override
@@ -78,6 +94,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         camObj.getParameters().setPreviewSize(width, height);
         camObj.setDisplayOrientation(90);
         camObj.startPreview();
+        safeToTakePhoto = true;
     }
 
     @Override

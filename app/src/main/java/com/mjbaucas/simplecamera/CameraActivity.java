@@ -8,15 +8,16 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 public class CameraActivity extends AppCompatActivity implements SensorEventListener {
     CameraPreview camPrev;
     LinearLayout camLayout;
     SensorManager sensorManager;
     Sensor accSensor;
+    Button switchBtn;
 
     float[] gravityVal;
     float lastAccelVal;
@@ -36,10 +37,15 @@ public class CameraActivity extends AppCompatActivity implements SensorEventList
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        switchBtn = findViewById(R.id.switch_button);
+        switchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                camPrev.switchCamera();
+            }
+        });
     }
-
-
-
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -59,9 +65,9 @@ public class CameraActivity extends AppCompatActivity implements SensorEventList
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        camPrev.takeImage(); 
+                        camPrev.takeImage();
                     }
-                }, 1000);
+                }, 2000);
             }
         }
     }

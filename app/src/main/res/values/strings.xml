@@ -3,7 +3,9 @@
 
     <string name="take_photo">Take a Photo</string>
     <string name="browse_photos">Browse Photos</string>
+    <string name="switch_camera">Switch Cameras</string>
 
     <string name="camera_tab">SimpleCamera:Camera</string>
     <string name="browse_tab">SimpleCamera:Browse</string>
+
 </resources>
