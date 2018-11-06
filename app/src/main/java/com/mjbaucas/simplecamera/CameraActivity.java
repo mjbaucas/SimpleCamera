@@ -10,11 +10,12 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 public class CameraActivity extends AppCompatActivity implements SensorEventListener {
     CameraPreview camPrev;
-    LinearLayout camLayout;
+    FrameLayout camLayout;
     SensorManager sensorManager;
     Sensor accSensor;
     Button switchBtn;
