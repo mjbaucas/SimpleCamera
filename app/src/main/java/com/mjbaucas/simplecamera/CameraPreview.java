@@ -1,11 +1,15 @@
 package com.mjbaucas.simplecamera;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,6 +32,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             public void onPictureTaken(byte[] data, final Camera camera) {
                 FileOutputStream outputStream;
                 try {
+                    if (cameraDirection == 1){
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        Matrix matrix = new Matrix();
+                        matrix.preScale(-1.0f, 1.0f);
+                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                        ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteOutputStream);
+                        data = byteOutputStream.toByteArray();
+                    }
                     outputStream = getContext().openFileOutput(String.format("%d.jpg", System.currentTimeMillis()), Context.MODE_PRIVATE);
                     outputStream.write(data);
                     outputStream.close();
